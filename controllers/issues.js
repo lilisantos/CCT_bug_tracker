@@ -20,7 +20,7 @@ module.exports = () => {
         const status = req.body.status;
         const project = req.body.project;
         const comments = req.body.comments;
-        const result = await issues.add(issueNumber, title, description, status, project, comment);
+        const result = await issues.add(issueNumber, title, description, status, project, comments);
         res.json(result);
     }
 
@@ -28,11 +28,20 @@ module.exports = () => {
         res.json(await issues.aggregateWithProjects());
     };
 
+    const updateStatus = async (req, res) => {
+        const issueNumber = req.body.issueNumber;
+        const status = req.body.status;
+
+        const result = await issues.update(issueNumber, status);
+        res.json(result);
+    }
+
 
     return {
         getController,
         postController,
         getById,
-        populatedController
+        populatedController,
+        updateStatus,
     }
 }

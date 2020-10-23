@@ -1,8 +1,6 @@
-// MONGO_URI="mongodb+srv://lili:admin@cluster0.g3qlb.mongodb.net/?retryWrites=true&w=majority"
-
 const uri = process.env.MONGO_URI;
 const MongoClient = require("mongodb").MongoClient;
-const DB_NAME = "book-store";
+const DB_NAME = "bug-tracker";
 const MONGO_OPTIONS = { useUnifiedTopology: true , useNewUrlParser: true };
 
 module.exports = () => {
@@ -65,6 +63,20 @@ module.exports = () => {
             });
         });
     };
+
+    const update = (collectionName, filter, itemUpdate) => {
+        return new Promise((resolve, reject) => {
+            MongoClient.connect(uri, MONGO_OPTIONS, (err, client) => {
+                const db = client.db(DB_NAME);
+                const collection = db.collection(collectionName);
+
+                collection.updateOne(filter, itemUpdate, (err, result) => {
+                    resolve(result);
+                });
+            });
+        });
+    };
+
    
 
 
@@ -75,5 +87,6 @@ module.exports = () => {
         add,
         count,
         aggregate,
+        update,
     };
 };

@@ -11,6 +11,11 @@ module.exports = () => {
         res.json(await projects.get(parseInt(req.params.id)));
     }
 
+    // const getBySlug = async (req, res) => {
+    //     res.json(await projects.get(req.params.slug));
+    //     console.log(projects.get(parseInt(req.params.slug)));
+    // }
+
     const postController = async (req, res) => {
         const slug = req.body.slug;
         const name = req.body.name;
