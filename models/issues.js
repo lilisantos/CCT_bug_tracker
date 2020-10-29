@@ -1,5 +1,6 @@
 const db = require('../db')();
 const COLLECTION = "issues";
+const COLLECTION_PROJECTS = "projects";
 const LOOKUP_PROJECTS_PIPELINE = [
     {
         $lookup: {
@@ -8,52 +9,60 @@ const LOOKUP_PROJECTS_PIPELINE = [
             foreignField: "id",
             as: "p",
         },
-    },
-    {
-        $project: {
-            id: 1,
-            name: 1,
-            project: {
-                $arrayElemAt: ["$p", 0],
-            },
-        },
-    },
+    }
 ];
-
 
 module.exports = () => {
    
-    const get = async (id = null) => {
+    const get = async (issueNumber = null) => {
         console.log(' inside issues model');
-        if(!id){
+        if(!issueNumber){
             const issues = await db.get(COLLECTION);
             return issues;
         }
 
-        const issues = await db.get(COLLECTION, {id});
+        const issues = await db.get(COLLECTION, {issueNumber});
         return issues;
     }
 
-    const add = async(project, comments, user) => {
+    // const getComment = async (issueNumber = null) => {
+    //     console.log(' inside issues model');
+    //     if(!issueNumber){
+    //         const issues = await db.getSome(COLLECTION);
+    //         return issues;
+    //     }
+
+    //     const issues = await db.getSome(COLLECTION, {issueNumber});
+    //     return issues;
+    // }
+
+    const add = async(title, description, slug) => {
+       const projectID = await db.findProjectID(slug);
        const issueCount = await db.count(COLLECTION);
+
        const results = await db.add(COLLECTION, {
-           issueNumber: issueCount + 1,
+           issueNumber: slug + "-" + (issueCount + 1),
            title: title,
            description: description,
-           status: status,
-           project: project,
-           comments: comments           
+           status: "open",
+           project: projectID    
        });
        return results.result;
     }
 
     //ADD COMMENTS
-    // results = await db.add(collection, {
-    //     id: id,
-    //     comments: [
-    //     text: "your text"
-    //     ]
-    //     } 
+    // const addComment = async(project, issueNumber, title, description, status, comments) => {
+    //     const issueCount = await db.count(COLLECTION);
+    //     const results = await db.add(COLLECTION, {
+    //         issueNumber: issueNumber,
+    //         title: title,
+    //         description: description,
+    //         status: status,
+    //         project: project,
+    //         comments: comments          
+    //     });
+    //     return results.result;
+    //  }
         
 
     const aggregateWithProjects = async() => {
@@ -61,14 +70,15 @@ module.exports = () => {
         return issues;
     };
 
-    const update = async () => {
-        // if(!id){
-        //     console.log("ID needed for update");
-        // }
-
+    const update = async (issueNumber, status) => {
+        if(!issueNumber){
+            console.log("Issue number required for update");
+            return null;
+        }
+       
         const results = await db.update(COLLECTION, 
             {issueNumber: issueNumber}, //filter
-            {itemUpdate: status} //update
+            {status: status} //update
         );
         return results.result;
     };

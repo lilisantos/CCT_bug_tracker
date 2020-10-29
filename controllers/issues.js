@@ -8,18 +8,24 @@ module.exports = () => {
         res.json(await issues.get());
     }
 
-    const getById = async (req, res) => {
+    const getByIssueNumber = async (req, res) => {
        
-        res.json(await issues.get(parseInt(req.params.id)));
+        res.json(await issues.get((req.params.issueNumber)));
+    }
+
+    const getComment = async (req, res) => {
+       
+        res.json(await issues.getSome((req.params.issueNumber)));
+    }
+
+
+    const getCommentsByIssueNumber = async (req, res) => {
+       
+        res.json(await issues.get((req.params.issueNumber)));
     }
 
     const postController = async (req, res) => {
-        const issueNumber = req.body.issueNumber;
-        const title = req.body.title;
-        const description = req.body.description;
-        const status = req.body.status;
-        const project = req.body.project;
-        const comments = req.body.comments;
+        const {issueNumber, title, description, status, project, comments} = req.body;
         const result = await issues.add(issueNumber, title, description, status, project, comments);
         res.json(result);
     }
@@ -29,8 +35,10 @@ module.exports = () => {
     };
 
     const updateStatus = async (req, res) => {
-        const issueNumber = req.body.issueNumber;
-        const status = req.body.status;
+        // const issueNumber = req.body.issueNumber;
+        // const status = req.body.status;
+
+        const {issueNumber, status} = req.body;
 
         const result = await issues.update(issueNumber, status);
         res.json(result);
@@ -40,8 +48,9 @@ module.exports = () => {
     return {
         getController,
         postController,
-        getById,
+        getByIssueNumber,
         populatedController,
         updateStatus,
+        getComment
     }
 }

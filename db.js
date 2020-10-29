@@ -5,13 +5,13 @@ const MONGO_OPTIONS = { useUnifiedTopology: true , useNewUrlParser: true };
 
 module.exports = () => {
     
-    const count = (collectionName) => {
+    const count = (collectionName, query = {}) => {
         return new Promise((resolve, reject) => {
             MongoClient.connect(uri, MONGO_OPTIONS, (err, client) => {
                 const db = client.db(DB_NAME);
                 const collection = db.collection(collectionName);
 
-                collection.countDocuments({}, (err, docs) => {
+                collection.countDocuments({query}, (err, docs) => {
                     resolve(docs);
                     client.close();
                 });
@@ -31,6 +31,20 @@ module.exports = () => {
             });            
         });
     };
+
+    // //get only some comments
+    // const getSome = (collectionName, query = {}) => {
+    //     return new Promise((resolve, reject) => {
+    //         MongoClient.connect(uri, MONGO_OPTIONS, (err, client) => {
+    //             const db = client.db(DB_NAME);
+    //             const collection = db.collection(collectionName);
+    //             collection.find({}, { projection: { _id: 0, comments: 1 } }).toArray((err, docs) => {
+    //                 resolve(docs);
+    //                 client.close();
+    //             });
+    //         });            
+    //     });
+    // };
 
     const add = (collectionName, item) => {
         return new Promise((resolve, reject) => {
@@ -70,17 +84,34 @@ module.exports = () => {
                 const db = client.db(DB_NAME);
                 const collection = db.collection(collectionName);
 
-                collection.updateOne(filter, itemUpdate, (err, result) => {
+                collection.updateOne({filter}, {$set: {itemUpdate}}, {upsert: false}, (err, result) => {
                     resolve(result);
                 });
             });
         });
-    };
-
+    };    
    
 
+    const findProjectID = (slug) => {
+        return new Promise((resolve, reject) => {
+            MongoClient.connect(uri, MONGO_OPTIONS, (err, client) => {
+                const db = client.db(DB_NAME);
+                const collection = db.collection("projects");
 
-   
+                collection.findOne({"slug": slug}, (err, docs) => {
+                    if(docs == null){
+                        resolve(null);
+                        client.close();
+                    }else{
+                        resolve(docs._id);
+                        client.close();
+                    }
+
+                   
+                });
+            });
+        });
+    }
 
     return {
         get,
@@ -88,5 +119,6 @@ module.exports = () => {
         count,
         aggregate,
         update,
+        findProjectID
     };
 };
