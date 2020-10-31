@@ -36,11 +36,8 @@ module.exports = () => {
     const updateIssue = async (req, res) => {
         const {issueNumber, status} = req.params;
 
-        console.log("Project controller:" + issueNumber);
-        console.log("Project controller STATUS:" + status);
-
         //Calls the add method on the issues model
-        const result = await issues.update(issueNumber, status);
+        const result = await issues.updateStatus(issueNumber, status);
         res.json(result);
     };
    

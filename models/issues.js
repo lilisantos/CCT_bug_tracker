@@ -1,6 +1,5 @@
 const db = require('../db')();
 const COLLECTION = "issues";
-const COLLECTION_PROJECTS = "projects";
 const LOOKUP_PROJECTS_PIPELINE = [
     {
         $lookup: {
@@ -25,16 +24,17 @@ module.exports = () => {
         return issues;
     }
 
-    // const getComment = async (issueNumber = null) => {
-    //     console.log(' inside issues model');
-    //     if(!issueNumber){
-    //         const issues = await db.getSome(COLLECTION);
-    //         return issues;
-    //     }
+    //Needs improvement
+    const getCommentForIssue = async (issueNumber, commentID) => {
+        if(!commentID){
+            const comments = await db.getComments(COLLECTION);
+            return comments;
+        }
 
-    //     const issues = await db.getSome(COLLECTION, {issueNumber});
-    //     return issues;
-    // }
+        const comments = await db.getComments(COLLECTION, [{commentID}, {issueNumber}]);
+        
+        return comments;
+    }    
 
     const add = async(title, description, slug) => {
        const projectID = await db.findProjectID(slug);
@@ -50,27 +50,64 @@ module.exports = () => {
        return results.result;
     }
 
-    //ADD COMMENTS
-    // const addComment = async(project, issueNumber, title, description, status, comments) => {
-    //     const issueCount = await db.count(COLLECTION);
-    //     const results = await db.add(COLLECTION, {
-    //         issueNumber: issueNumber,
-    //         title: title,
-    //         description: description,
-    //         status: status,
-    //         project: project,
-    //         comments: comments          
-    //     });
-    //     return results.result;
-    //  }
-        
+    const addComment = async(issueNumber, text, author) => {
+               
+        const LOOKUP_SIZE_ARRAY_PIPELINE = [
+            {               
+                $match: {
+                   'issueNumber' : issueNumber
+                }
+            },
+            {
+                $project:{
+                    NumberOfItemsInArray: {$size: "$comments"}
+                 }
+            }
+        ];
+        const commentsCount = await db.aggregate(COLLECTION, LOOKUP_SIZE_ARRAY_PIPELINE);
+
+        const userID = await db.findUserID(author);
+
+        const results = await db.updateComment(COLLECTION, 
+            {issueNumber: issueNumber}, //filter
+            {comments: [
+                {id: commentsCount.NumberOfItemsInArray + 1,
+                text: text,
+                author: userID,
+                }]
+            } //update
+        );
+        return results.result;
+     }
 
     const aggregateWithProjects = async() => {
         const issues = await db.aggregate(COLLECTION, LOOKUP_PROJECTS_PIPELINE);
         return issues;
     };
 
-    const update = async (issueNumber, status) => {
+    const aggregateWithUsers = async(email) => {
+        const LOOKUP_USERS_PIPELINE = [
+            {
+                $match: {
+                    'email': 'email'
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "author",
+                    foreignField: "id",
+                    as: "a",
+                },
+            }
+        ];
+
+        const issues = await db.aggregate(COLLECTION, LOOKUP_USERS_PIPELINE);
+        return issues;
+    };
+    
+
+    const updateStatus = async (issueNumber, status) => {
         if(!issueNumber){
             console.log("Issue number required for update");
             return null;
@@ -83,11 +120,16 @@ module.exports = () => {
         return results.result;
     };
 
+   
+
 
     return {
         get,
         add,
         aggregateWithProjects,
-        update,
+        aggregateWithUsers,
+        updateStatus,
+        addComment,
+        getCommentForIssue,
     }
 };

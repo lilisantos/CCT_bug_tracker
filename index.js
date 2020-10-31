@@ -9,38 +9,13 @@ const port = process.env.PORT || 3000;
 const issuesController = require('./controllers/issues')();
 const projectsController = require('./controllers/projects')();
 const usersController = require('./controllers/users')();
+const commentsController = require('./controllers/comments')();
 
 const users = require('./models/users')();
 
 const app = (module.exports = express());
 
-const myPassword = "foobarbaz";
-
-// console.log( undefined
-//     crypto.createHash('md5').update(myPassword).digest('hex'));
-
-//Salt
-// function createHash(clearTextPassword, userSalt){
-//     const ALGO = "sha256";
-//     const SITE_SALT = "Some random text that we keep private";
-//     let hash = SITE_SALT + userSalt + clearTextPassword;
-//     hash = crypto.createHash(ALGO).update(hash).digest("hex");
-
-//     return hash;
-// }
-
-// function getHash(clearTextPassword){
-//     const userSalt = crypto.randomBytes(10).toString('hex');
-//     const hash = createHash(clearTextPassword, userSalt);
-
-//     return userSalt + '.' + hash;
-// }
-
-// console.log(
-//     getHash(myPassword));
-
-
-//Logging
+//Logging with Hash
 app.use((req, res, next) => {
     //Display log for requests
     console.log("[%s] %s -- %s", new Date(), req.method, req.url);
@@ -56,10 +31,11 @@ app.use(async(req, res, next) => {
    };
 
    const suppliedKey = req.headers["x-api-key"];
+//    const hashedKey = await users.createHash(suppliedKey);
+
    const clientIp = 
         req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
-        //Check Pre-shared key
         if(!suppliedKey){
             console.log(
                 " [%s] FAILED AUTHENTICATION -- %s, No Key Supplied",
@@ -69,7 +45,10 @@ app.use(async(req, res, next) => {
             FailedAuthMessage.code = "01";
             return res.status(401).json(FailedAuthMessage);
         }
+              
+
         const user = await users.getByKey(suppliedKey);
+        
         if(!user){
             console.log(
                 " [%s] FAILED AUTHENTICATION -- %s, Bad Key Supplied",
@@ -91,36 +70,43 @@ app.get("/", (req, res) => {
     });
 });
 
-//Get all issues
-app.get('/issues', issuesController.getController);
-//Get an issue by issueNumber (project.slug + num)
-app.get('/issues/:issueNumber', issuesController.getByIssueNumber);
-
-//Get all issues with projects
-// app.get('/issues/populated', issuesController.populatedController);
-
-
 
 //Get all projects
 app.get('/projects', projectsController.getController);
-//Get project by slug
+//Get individual projects by slug
 app.get('/projects/:slug', projectsController.getBySlug);
-//Get issues for a project by slug
-app.get('/projects/:slug/issues', projectsController.populatedController);
-//Add an issues
-app.post('/projects/:slug/issues', projectsController.postNewIssue);
-//Add a projects
+//Add new project
 app.post('/projects', projectsController.postController);
-//Update an issue status
-app.put('/projects/:slug/issues/:issueNumber/:status', projectsController.updateIssue);
 
 
 //Get all users
 app.get('/users', usersController.getController);
 //Get users by email
 app.get('/users/:email', usersController.getByEmail);
-//Add a users
+//Add a new user individually
 app.post('/users', usersController.postController);
+
+//Get all issues
+app.get('/issues', issuesController.getController);
+//Get individual issues by issueNumber (project.slug + num)
+app.get('/issues/:issueNumber', issuesController.getByIssueNumber);
+//Get all issues for a project by slug
+app.get('/projects/:slug/issues', projectsController.populatedController);
+//Update the status of an issue
+app.put('/projects/:slug/issues/:issueNumber/:status', projectsController.updateIssue);
+//Add a new issues individually
+app.post('/projects/:slug/issues', projectsController.postNewIssue);
+
+//Get all comments
+app.get('/comments', commentsController.getController);
+//Get comments for an author
+app.get('/comments/:email', commentsController.populatedController);
+//Get all comments for an issue
+app.get('/issues/:issueNumber/comments', issuesController.getByIssueNumber);
+//Get specific comment for an issue
+app.get('/issues/:issueNumber/comments/:commentID', issuesController.getComment);
+//Add a new comment to an issue
+app.post('/issues/:issueNumber/comments', issuesController.addComment);
 
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);    

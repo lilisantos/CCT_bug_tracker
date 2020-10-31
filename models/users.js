@@ -4,43 +4,33 @@ const bcrypt = require("bcrypt");
 
 module.exports = () => {
 
-    const getByKey = async (key) => {
+    const getByKey = async (key, hashedKey) => {
+
         if(!key){
             console.log("01: Missing key");
             return null;
         }
-
+                
+        // const match = await bcrypt.compare(key, hashedKey);  
+       
         const users = await db.get(COLLECTION, {key});
+        console.log("users: " + users[0]);
         if(users.length !== 1){
             console.log("02: Bad key");
             return null;
         }
-
+        
+        
         return users[0];
     };
 
-    // const hashKey = bcrypt.hash(password, 11, (err, hash) => {
-    //     if(err) {
-    //         console.log('ERROR HASHING');
-    //         console.log(err);
-    //     }
+    const createHash = async(password) => {
+        
+       const hash = bcrypt.hash(password, 11);
 
-    //     console.log(hash);
-    //     return hash;
-    // });
-
-    // const checkKey = bcrypt.compare(key, , (err, hash) => {
-    //     if(err) {
-    //         console.log('ERROR HASHING');
-    //         console.log(err);
-    //     }
-
-    //     console.log(hash);
-    //     return hash;
-    // });
-
+       return hash;        
+    }       
     
-  
     const get = async (email = null) => {
         console.log(' inside users model');
         if(!email){
@@ -54,12 +44,14 @@ module.exports = () => {
 
   
     const add = async(name, email, usertype, key) => {
+        
+        const hashedKey = await createHash(key);
     
         const results = await db.add(COLLECTION, {
            name: name,
            email: email,
            usertype: usertype,
-           key: key         
+           key: hashedKey,      
         });
         return results.result;
      };
@@ -68,5 +60,6 @@ module.exports = () => {
         get,
         add,
         getByKey,
+        createHash,
     };
 };

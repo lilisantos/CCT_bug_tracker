@@ -12,18 +12,14 @@ module.exports = () => {
        
         res.json(await issues.get((req.params.issueNumber)));
     }
-
+    
     const getComment = async (req, res) => {
+        const {issueNumber, commentID} = req.params;
        
-        res.json(await issues.getSome((req.params.issueNumber)));
+        res.json(await issues.getCommentForIssue(issueNumber, commentID));
     }
 
-
-    const getCommentsByIssueNumber = async (req, res) => {
-       
-        res.json(await issues.get((req.params.issueNumber)));
-    }
-
+    
     const postController = async (req, res) => {
         const {issueNumber, title, description, status, project, comments} = req.body;
         const result = await issues.add(issueNumber, title, description, status, project, comments);
@@ -34,23 +30,20 @@ module.exports = () => {
         res.json(await issues.aggregateWithProjects());
     };
 
-    const updateStatus = async (req, res) => {
-        // const issueNumber = req.body.issueNumber;
-        // const status = req.body.status;
-
-        const {issueNumber, status} = req.body;
-
-        const result = await issues.update(issueNumber, status);
+    const addComment = async (req, res) => {
+        const {text, author} = req.body;
+        const issueNumber = req.params.issueNumber;
+        
+        const result = await issues.addComment(issueNumber, text, author);
         res.json(result);
     }
-
 
     return {
         getController,
         postController,
         getByIssueNumber,
         populatedController,
-        updateStatus,
-        getComment
+        getComment,
+        addComment,
     }
 }
