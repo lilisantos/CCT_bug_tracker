@@ -7,17 +7,31 @@ const issues = require('../models/issues.js')();
 module.exports = () => {
 
     const getController = async (req, res) => {
-        res.json(await projects.get());
+        const {projectList, error} = await projects.get();
+        if(error){
+            console.log("=== get:: Projects Error");
+            return res.status(500).json(error);
+        }
+        res.json(projectList);
     }
 
     const getBySlug = async (req, res) => {
-        res.json(await projects.get(req.params.slug));
-        console.log(projects.get(parseInt(req.params.slug)));
+        const {project, error} = await projects.get(req.params.slug);
+        if(error){
+            console.log("=== getBySlug:: Projects Error");
+            return res.status(500).json(error);
+        }
+        res.json(project);
     }
 
-    const postController = async (req, res) => {
+    const postController = async (req, res) => {   
         const {slug, name, description} = req.body;
-        const result = await projects.add(slug, name, description);
+
+        const {results, error} = await projects.add(slug, name, description);
+        if(error){
+            console.log("=== post:: Projects Error");
+            return res.status(500).json(error);
+        }
         res.json(result);
     }
 
@@ -25,19 +39,33 @@ module.exports = () => {
         const {title, description} = req.body;
         const slug = req.params.slug;
         //Calls the add method on the issues model
-        const result = await issues.add(title, description, slug);
+        const {result, error} = await issues.add(title, description, slug);
+
+        if(error){
+            console.log("=== postNewIssue:: Projects Error");
+            return res.status(500).json(error);
+        }
         res.json(result);
     };
 
     const populatedController = async (req, res) => {
-        res.json(await projects.aggregateWithIssues(req.params.slug));
+        const {projectIssues, error} = await projects.aggregateWithIssues(req.params.slug);
+        if(error){
+            console.log("=== aggregate:: Projects Error");
+            return res.status(500).json(error);
+        }
+        res.json(projectIssues);
     };
 
     const updateIssue = async (req, res) => {
         const {issueNumber, status} = req.params;
 
         //Calls the add method on the issues model
-        const result = await issues.updateStatus(issueNumber, status);
+        const {result, error} = await issues.updateStatus(issueNumber, status);
+        if(error){
+            console.log("=== updateIssue:: Projects Error");
+            return res.status(500).json(error);
+        }
         res.json(result);
     };
    
@@ -48,6 +76,5 @@ module.exports = () => {
         getBySlug,
         populatedController,
         updateIssue
-
     };
 }

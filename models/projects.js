@@ -6,26 +6,37 @@ module.exports = () => {
     const get = async (slug = null) => {
         console.log(' inside projects model');
         if(!slug){
+          try{
             const projects = await db.get(COLLECTION);
-            return projects;
+            return {projectList: projects};
+          }catch(ex){
+            return {error: ex}
+          }           
         }
 
-        const projects = await db.get(COLLECTION, {slug});
-            return projects;        
+        try{
+          const projects = await db.get(COLLECTION, {slug});
+          return {projectList: projects};   
+        }catch(ex){
+          return {error: ex}
+        }
+             
     }
 
     const add = async(slug, name, description) => {
-       const projectCount = await db.count(COLLECTION);
-       const results = await db.add(COLLECTION, {
-           slug: slug,
-           name: name,
-           description: description,
-       });
-       return results.result;
+      try{
+        const results = await db.add(COLLECTION, {
+          slug: slug,
+          name: name,
+          description: description,
+         });
+         return results.result;
+      }catch(ex){
+          return {error: ex}
+      }
     }
 
-    const aggregateWithIssues = async(slug) => {
-       
+    const aggregateWithIssues = async(slug) => {       
         //Pipeline that searches for the project with the slug provided
         const LOOKUP_ISSUES_PIPELINE = [
             {
@@ -43,8 +54,12 @@ module.exports = () => {
             },
         ];
 
-        const projects = await db.aggregate(COLLECTION, LOOKUP_ISSUES_PIPELINE);
-        return projects;
+        try {
+          const projects = await db.aggregate(COLLECTION, LOOKUP_ISSUES_PIPELINE);
+          return projects;
+        }catch(ex){
+          return {error: ex}
+        }        
     }
 
     return {

@@ -12,16 +12,21 @@ module.exports = () => {
         }
                 
         // const match = await bcrypt.compare(key, hashedKey);  
-       
-        const users = await db.get(COLLECTION, {key});
-        console.log("users: " + users[0]);
-        if(users.length !== 1){
+     
+       try{
+          const users = await db.get(COLLECTION, {key});
+
+          if(users.length !== 1){
             console.log("02: Bad key");
             return null;
-        }
-        
-        
-        return users[0];
+          } 
+          return users[0];
+       }catch(ex){
+           console.log("==== Exception users:: == getByKey");
+           console.log(ex);
+           return null;
+       }
+       
     };
 
     const createHash = async(password) => {
@@ -44,16 +49,24 @@ module.exports = () => {
 
   
     const add = async(name, email, usertype, key) => {
-        
-        const hashedKey = await createHash(key);
+        try{
+            const hashedKey = await createHash(key);
+        }catch(ex){
+            return {error: ex}
+        }       
     
-        const results = await db.add(COLLECTION, {
-           name: name,
-           email: email,
-           usertype: usertype,
-           key: hashedKey,      
-        });
-        return results.result;
+        try{
+            const results = await db.add(COLLECTION, {
+                name: name,
+                email: email,
+                usertype: usertype,
+                key: hashedKey,      
+             });
+             return results.result;
+        }catch(ex){
+            return {error: ex}
+        }
+       
      };
 
     return {

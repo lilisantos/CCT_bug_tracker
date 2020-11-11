@@ -20,27 +20,53 @@ module.exports = () => {
         console.log(' inside comments model');
 
         if(email){
-            const userID = await db.findUserID(email);
-        }
-        if(issueNumber){
-            const comments = await db.getComments(COLLECTION, {issueNumber});
-        }
+            try{
+                const userID = await db.findUserID(email);
+               
+            }catch(ex){
+                console.log("=== findUserID:: Comments Error");
+                return {error: ex};
+            }
+
+            try{
+                const comments = await db.getComments(COLLECTION, {userID});
+                return {commentList: comments}
+            }catch(ex){
+                console.log("=== getByUserId:: Comments Error");
+                return {error: ex};
+            }
+           
+            
+        }else if(issueNumber){
+            try{
+                const comments = await db.getComments(COLLECTION, {issueNumber});
+                return {commentList: comments};
+            }catch(ex){
+                console.log("=== getByIssue:: Comments Error");
+                return {error: ex}
+            }
+        }        
         
-        return comments;
     }
 
     
     const add = async(project, issueNumber, title, description, status, comments) => {
-       const issueCount = await db.count(COLLECTION);
-       const results = await db.add(COLLECTION, {
-           issueNumber: issueNumber,
-           title: title,
-           description: description,
-           status: status,
-           project: project,
-           comments: comments          
-       });
-       return results.result;
+    //    const issueCount = await db.count(COLLECTION);
+        try{
+            const results = await db.add(COLLECTION, {
+                issueNumber: issueNumber,
+                title: title,
+                description: description,
+                status: status,
+                project: project,
+                comments: comments          
+            });
+            return results.result;
+        }catch(ex){
+            console.log("=== add:: Comments Error");
+            return {error: ex};
+        }
+       
     }
 
     const aggregateWithUsers = async(email) => {
@@ -67,9 +93,15 @@ module.exports = () => {
             }
         ]
 
-        console.log(LOOKUP_USERS_PIPELINE);
-        const comments = await db.aggregate(COLLECTION, LOOKUP_USERS_PIPELINE);
-        return comments;
+       try{
+          const comments = await db.aggregate(COLLECTION, LOOKUP_USERS_PIPELINE);
+          return {commentUsers: comments};
+       }catch(ex){
+           console.log("=== aggregate Users:: Comments Error");
+           return {error: ex};
+       }
+        
+       
     };
 
     const update = async (issueNumber, status) => {
@@ -78,11 +110,17 @@ module.exports = () => {
             return null;
         }
        
-        const results = await db.update(COLLECTION, 
-            {issueNumber: issueNumber}, //filter
-            {status: status} //update
-        );
-        return results.result;
+        try{
+            const results = await db.update(COLLECTION, 
+                {issueNumber: issueNumber}, //filter
+                {status: status} //update
+            );
+            return results.result;
+        }catch(ex){
+            console.log("=== update:: Comments Error");
+            return {error: ex}
+        }
+       
     };
 
 

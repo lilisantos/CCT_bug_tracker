@@ -16,38 +16,67 @@ module.exports = () => {
     const get = async (issueNumber = null) => {
         console.log(' inside issues model');
         if(!issueNumber){
-            const issues = await db.get(COLLECTION);
-            return issues;
+            try{
+                const issues = await db.get(COLLECTION);
+                return {issueList: issues};
+            }catch(ex){
+                return {error: ex};
+            }          
         }
 
-        const issues = await db.get(COLLECTION, {issueNumber});
-        return issues;
+        try{
+            const issues = await db.get(COLLECTION, {issueNumber});
+            return {issueList: issues};
+        }catch(ex){
+            return {error:ex};
+        }       
     }
 
     //Needs improvement
-    const getCommentForIssue = async (issueNumber, commentID) => {
+    const getCommentForIssue = async (issueNumber, commentID) => {        
         if(!commentID){
-            const comments = await db.getComments(COLLECTION);
-            return comments;
+            try{
+                const comments = await db.getComments(COLLECTION);
+                return {commentList: comments};
+            }catch(ex){
+                return {error: ex};
+            }          
         }
 
-        const comments = await db.getComments(COLLECTION, [{commentID}, {issueNumber}]);
-        
-        return comments;
+        try{
+            const comments = await db.getComments(COLLECTION, [{commentID}, {issueNumber}]);
+            return {commentList: comments};
+        }catch(ex){
+            return {error: ex}
+        }
     }    
 
     const add = async(title, description, slug) => {
-       const projectID = await db.findProjectID(slug);
-       const issueCount = await db.count(COLLECTION);
+       try{
+          const projectID = await db.findProjectID(slug);
+       }catch(ex){
+           return {error: ex}
+       }
 
-       const results = await db.add(COLLECTION, {
-           issueNumber: slug + "-" + (issueCount + 1),
-           title: title,
-           description: description,
-           status: "open",
-           project: projectID    
-       });
-       return results.result;
+      try{
+        const issueCount = await db.count(COLLECTION);
+      }catch(ex){
+          return {error: ex}
+      }
+      
+      try{
+        const results = await db.add(COLLECTION, {
+            issueNumber: slug + "-" + (issueCount + 1),
+            title: title,
+            description: description,
+            status: "open",
+            project: projectID    
+        });
+        return results.result;
+      }catch(ex){
+          return {error: ex}
+      }
+      
     }
 
     const addComment = async(issueNumber, text, author) => {

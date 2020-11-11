@@ -23,6 +23,7 @@ app.use((req, res, next) => {
 });
 
 app.use(async(req, res, next) => {
+    
    const FailedAuthMessage = {
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
        error: "Failed Authentication",
