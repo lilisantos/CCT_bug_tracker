@@ -52,6 +52,8 @@ module.exports = () => {
     
     const add = async(project, issueNumber, title, description, status, comments) => {
     //    const issueCount = await db.count(COLLECTION);
+    
+ 
         try{
             const results = await db.add(COLLECTION, {
                 issueNumber: issueNumber,

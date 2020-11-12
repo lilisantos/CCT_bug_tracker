@@ -22,8 +22,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(async(req, res, next) => {
-    
+app.use(async(req, res, next) => {   
    const FailedAuthMessage = {
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
        error: "Failed Authentication",
@@ -87,6 +86,7 @@ app.get('/users/:email', usersController.getByEmail);
 //Add a new user individually
 app.post('/users', usersController.postController);
 
+
 //Get all issues
 app.get('/issues', issuesController.getController);
 //Get individual issues by issueNumber (project.slug + num)
@@ -121,5 +121,12 @@ app.use((req, res) => {
     });
 });
 
+//500
+app.use((req, res) => {
+    res.status(500).json({
+        error: 500,
+        message: 'Already registered on database',
+    });
+});
 
 

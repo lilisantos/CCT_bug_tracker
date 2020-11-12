@@ -24,6 +24,30 @@ module.exports = () => {
     }
 
     const add = async(slug, name, description) => {
+     
+      const checkProject = await db.findProjectID(slug);
+      try{
+          //if a project was found, return error message
+          if(checkProject != null){
+            console.log("===== Project already registered with this slug:: add ProjectModel Error");              
+            return null;
+           
+          }
+      }catch(ex){       
+          return {error: ex}
+      }
+
+      try{
+        //Checks if any of the fields is null
+        if (!slug || !name || !description){       
+            console.log("===== Not all the fields have been provided:: add ProjectModel Error");   
+            return null;
+        }
+    }catch(ex){       
+        return {error: ex}
+    }       
+ 
+
       try{
         const results = await db.add(COLLECTION, {
           slug: slug,

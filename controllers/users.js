@@ -1,10 +1,12 @@
 const users = require('../models/users.js')();
 
 module.exports = () => {
+    
 
     const getController = async (req, res) => {
         const {userList, error} = await users.get();
         if(error){
+            
             return res.status(500).json(error);
         }
         res.json(userList);
@@ -20,12 +22,12 @@ module.exports = () => {
 
     const postController = async (req, res) => {
         const {name, email, usertype, key} = req.body;
-
-        const {result, error} = await users.add(name, email, usertype, key);
+        
+        const {results, error} = await users.add(name, email, usertype, key);
         if(error){
             return res.status(500).json(error);
         }
-        res.json(result);
+        res.json(results);
     }
 
     return {

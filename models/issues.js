@@ -63,6 +63,17 @@ module.exports = () => {
       }catch(ex){
           return {error: ex}
       }
+
+      try{
+        //Checks if any of the fields is null
+        if (!title || !description || !slug){       
+            console.log("===== Not all the fields have been provided:: add IssueModel Error");   
+            return null;
+        }
+        }catch(ex){       
+            return {error: ex}
+        }       
+ 
       
       try{
         const results = await db.add(COLLECTION, {

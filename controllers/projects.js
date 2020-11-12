@@ -12,6 +12,7 @@ module.exports = () => {
             console.log("=== get:: Projects Error");
             return res.status(500).json(error);
         }
+        
         res.json(projectList);
     }
 
@@ -28,11 +29,11 @@ module.exports = () => {
         const {slug, name, description} = req.body;
 
         const {results, error} = await projects.add(slug, name, description);
-        if(error){
-            console.log("=== post:: Projects Error");
+        if(error){           
             return res.status(500).json(error);
         }
-        res.json(result);
+
+        res.json(results);
     }
 
     const postNewIssue = async (req, res) => {

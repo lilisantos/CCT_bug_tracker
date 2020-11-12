@@ -29,7 +29,8 @@ module.exports = () => {
        
     };
 
-    const createHash = async(password) => {
+
+    const createHash = (password) => {
         
        const hash = bcrypt.hash(password, 11);
 
@@ -49,12 +50,31 @@ module.exports = () => {
 
   
     const add = async(name, email, usertype, key) => {
+      
+        const checkEmail = await db.findUserID(email);        
+
         try{
-            const hashedKey = await createHash(key);
+            //if a user was not found, does nothing
+            if(checkEmail != null){
+                console.log("===== User already registered with this email:: add UserModel Error");      
+                return null;        
+                
+            }
         }catch(ex){
+            return {error: ex};
+        }       
+
+        const hashedKey = createHash(key);   
+        try{
+            //Checks if any of the fields is null
+            if (!name || !email || !usertype || !key){       
+                console.log("===== Not all the fields have been provided:: add UserModel Error");   
+                return null;
+            }
+        }catch(ex){       
             return {error: ex}
         }       
-    
+     
         try{
             const results = await db.add(COLLECTION, {
                 name: name,
