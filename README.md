@@ -4,12 +4,12 @@
 - [Technologies](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=2#technologies)
 - [Setup](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=3#setup)
 - [Features](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=4#features)
-- [Status](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=5#status)
-- [Inspiration](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=6#inspiration)
+- [Changelog](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=5#Changelog)
+- [Roadmap](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=6#Roadmap)
 - [Contact](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=7#contact)
 
 ## General info
-Add more general information about project. What the purpose of the project is? Motivation?
+This project is an APO to simulate a bug tracker system. The user can register new projects and add issues related to these. It is also possible to add new comments to the issues, as well as change its status.
 
 ## Technologies
 - NodeJS - version 14.15.0
@@ -23,26 +23,63 @@ Add more general information about project. What the purpose of the project is? 
 3. Run npm install to install dependencies.
 4. Run npm start, it will open the browser when ready.
 
-## Code Examples
-Show examples of usage: put-your-code-here
+## Example Usage
+The API works based on the following routes:
 
-## Features
+- Get all projects
+app.get('/projects', projectsController.getController);
+- Get individual projects by slug
+app.get('/projects/:slug', projectsController.getBySlug);
+- Add new project
+app.post('/projects', projectsController.postController);
+
+- Get all users
+app.get('/users', usersController.getController);
+- Get users by email
+app.get('/users/:email', usersController.getByEmail);
+- Add a new user individually
+app.post('/users', usersController.postController);
+
+- Get all issues
+app.get('/issues', issuesController.getController);
+- Get individual issues by issueNumber (project.slug + num)
+app.get('/issues/:issueNumber', issuesController.getByIssueNumber);
+- Get all issues for a project by slug
+app.get('/projects/:slug/issues', projectsController.populatedController);
+- Update the status of an issue
+app.put('/projects/:slug/issues/:issueNumber/:status', projectsController.updateIssue);
+- Add a new issues individually
+app.post('/projects/:slug/issues', projectsController.postNewIssue);
+
+- Get all comments
+app.get('/comments', commentsController.getController);
+- Get comments for an author
+app.get('/comments/:email', commentsController.populatedController);
+- Get all comments for an issue
+app.get('/issues/:issueNumber/comments', issuesController.getByIssueNumber);
+- Get specific comment for an issue
+app.get('/issues/:issueNumber/comments/:commentID', issuesController.getComment);
+- Add a new comment to an issue
+app.post('/issues/:issueNumber/comments', issuesController.addComment);
+
+
+## Changelog
 List of features ready and TODOs for future development
 
-- Awesome feature 1
-- Awesome feature 2
-- Awesome feature 3
+* Continuous Assesment Part 1 for the course CBWA
+    * Add and retrieve Projects
+    * Add and retrieve Issues
+    * Add and retrieve Users
+    * Add and retrieve Comments
 
+* Continuous Assesment Part 2 for the course CBWA
+    * Implementation of Error Checking
+    * Implementation of Duplicate Items Checking
+
+## Roadmap
 To-do list:
 
-- Wow improvement to be done 1
-- Wow improvement to be done 2
-
-## Status
-Project is: in progress, finished, no longer continue and why?
-
-## Inspiration
-Add here credits. Project inspired by..., based on...
+- Front-end interface
 
 ## Contact
-Created by @flynerdpl - feel free to contact me!
+Created by @lilisantos - feel free to contact me!
