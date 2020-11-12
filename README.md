@@ -1,27 +1,27 @@
 # Bug Tracker
 ## Table of contents
 - [General Info](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=1#general-info)
-- Screenshots
-- Technologies
-- Setup
-- Features
-- Status
-- Inspiration
-- Contact
+- [Technologies](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=2#technologies)
+- [Setup](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=3#setup)
+- [Features](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=4#features)
+- [Status](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=5#status)
+- [Inspiration](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=6#inspiration)
+- [Contact](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=7#contact)
 
 ## General info
 Add more general information about project. What the purpose of the project is? Motivation?
 
-## Screenshots
-Example screenshot
-
 ## Technologies
-- Tech 1 - version 1.0
-- Tech 2 - version 2.0
-- Tech 3 - version 3.0
+- NodeJS - version 14.15.0
+- MongoDB - version 4.2.10
+- ExpressJS - version 4.17.1
+- BCrypt - version 5.0.0
 
 ## Setup
-Describe how to install / setup your local environement / add link to demo version.
+1. Clone this repo using git clone https://https://github.com/lilisantos/CCT_bug_tracker.
+2. Move to the appropriate directory: cd CCT_Bug_Tracker.
+3. Run npm install to install dependencies.
+4. Run npm start, it will open the browser when ready.
 
 ## Code Examples
 Show examples of usage: put-your-code-here
