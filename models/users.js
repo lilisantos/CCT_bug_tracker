@@ -40,24 +40,39 @@ module.exports = () => {
     const get = async (email = null) => {
         console.log(' inside users model');
         if(!email){
-            const users = await db.get(COLLECTION);
-            return users;
+            try{
+                const users = await db.get(COLLECTION);
+                  
+                return {userList: users};
+            }catch(ex){
+                console.log("==== Exception users:: == get");
+                console.log(ex);
+                return null;
+            }
         }
-
-        const users = await db.get(COLLECTION, {email});
-        return users;
+       
+        try{
+            const users = await db.get(COLLECTION, {email});
+            return {userList: users};
+        }catch(ex){
+            console.log("==== Exception users:: == get w/ email");
+            console.log(ex);
+            return null;
+        }
+        
     };
 
   
     const add = async(name, email, usertype, key) => {
       
-        const checkEmail = await db.findUserID(email);        
+     
 
         try{
-            //if a user was not found, does nothing
+            const checkEmail = await db.findUserID(email);        
+            //if a userList: users was not found, does nothing
             if(checkEmail != null){
                 console.log("===== User already registered with this email:: add UserModel Error");      
-                return null;        
+                return {error: "===== User already registered with this email:: add UserModel Error"};        
                 
             }
         }catch(ex){

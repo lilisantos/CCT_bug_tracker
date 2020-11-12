@@ -122,11 +122,12 @@ app.use((req, res) => {
 });
 
 //500
-app.use((req, res) => {
-    res.status(500).json({
-        error: 500,
-        message: 'Already registered on database',
-    });
-});
+app.use(function (error, req, res, next) {
+    if(error instanceof SyntaxError){ //Handle SyntaxError here.
+      return res.status(500).send({data : "Invalid data"});
+    } else {
+      next();
+    }
+  });
 
 
