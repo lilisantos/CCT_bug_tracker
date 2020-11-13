@@ -1,5 +1,5 @@
 ## Simple
-FROM node:latest
+FROM node:14
 WORKDIR /src
 COPY ./src ./src
 COPY package.json .
