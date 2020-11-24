@@ -26,55 +26,55 @@ This project is an APO to simulate a bug tracker system. The user can register n
 ## Example Usage
 The API works based on the following routes:
 
-- Get all projects
-app.get('/projects', projectsController.getController);
-- Get individual projects by slug
-app.get('/projects/:slug', projectsController.getBySlug);
-- Add new project
-app.post('/projects', projectsController.postController);
+- Get all projects:
+     ```GET /projects```
+- Get individual projects by slug:
+ ``` GET /projects/:slug ```
+- Add new project;
+ ```POST /projects' ```
+ 
+- Get all users:
+```GET /users```
+- Get users by email:
+```GET /users/:email```
+- Add a new user individually:
+```POST /users```
 
-- Get all users
-app.get('/users', usersController.getController);
-- Get users by email
-app.get('/users/:email', usersController.getByEmail);
-- Add a new user individually
-app.post('/users', usersController.postController);
+- Get all issues:
+```GET /issues```
+- Get individual issues by issueNumber (project.slug + num):
+```GET /issues/:issueNumber```
+- Get all issues for a project by slug:
+```GET /projects/:slug/issues```
+- Update the status of an issue:
+```PUT /projects/:slug/issues/:issueNumber/:status```
+- Add a new issues individually:
+```GET /projects/:slug/issues```
 
-- Get all issues
-app.get('/issues', issuesController.getController);
-- Get individual issues by issueNumber (project.slug + num)
-app.get('/issues/:issueNumber', issuesController.getByIssueNumber);
-- Get all issues for a project by slug
-app.get('/projects/:slug/issues', projectsController.populatedController);
-- Update the status of an issue
-app.put('/projects/:slug/issues/:issueNumber/:status', projectsController.updateIssue);
-- Add a new issues individually
-app.post('/projects/:slug/issues', projectsController.postNewIssue);
-
-- Get all comments
-app.get('/comments', commentsController.getController);
-- Get comments for an author
-app.get('/comments/:email', commentsController.populatedController);
-- Get all comments for an issue
-app.get('/issues/:issueNumber/comments', issuesController.getByIssueNumber);
-- Get specific comment for an issue
-app.get('/issues/:issueNumber/comments/:commentID', issuesController.getComment);
-- Add a new comment to an issue
-app.post('/issues/:issueNumber/comments', issuesController.addComment);
-
+- Get all comments:
+```GET /comments```
+- Get comments for an author:
+```GET /comments/:email```
+- Get all comments for an issue:
+```GET /issues/:issueNumber/comments```
+- Get specific comment for an issue:
+```GET /issues/:issueNumber/comments/:commentID```
+- Add a new comment to an issue:
+```GET /issues/:issueNumber/comments```
 
 ## Changelog
 List of features ready and TODOs for future development
 
-* Continuous Assesment Part 1 for the course CBWA
+- Continuous Assesment Part 1 for the course CBWA
     * Add and retrieve Projects
     * Add and retrieve Issues
     * Add and retrieve Users
     * Add and retrieve Comments
 
-* Continuous Assesment Part 2 for the course CBWA
+- Continuous Assesment Part 2 for the course CBWA
     * Implementation of Error Checking
     * Implementation of Duplicate Items Checking
+    * Project Dockerized
 
 ## Roadmap
 To-do list:
