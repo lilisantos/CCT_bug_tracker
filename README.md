@@ -1,4 +1,9 @@
 # Bug Tracker
+
+<h2 align="center">A NodeJS app developed for academic purposes for the course CCT - Cloud Based Web Applications</h2>
+<hr />
+
+
 ## Table of contents
 - [General Info](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=1#general-info)
 - [Technologies](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=2#technologies)
@@ -9,7 +14,7 @@
 - [Contact](https://github.com/lilisantos/CCT_bug_tracker/new/master?readme=7#contact)
 
 ## General info
-This project is an APO to simulate a bug tracker system. The user can register new projects and add issues related to these. It is also possible to add new comments to the issues, as well as change its status.
+This p
 
 ## Technologies
 - NodeJS - version 14.15.0
