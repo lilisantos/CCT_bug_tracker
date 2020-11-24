@@ -1,8 +1,8 @@
 const db = require('../db.js');
 
-const projects = require('../models/projects.js')();
+const projects = require('../../models/projects.js')();
 
-const issues = require('../models/issues.js')();
+const issues = require('../../models/issues.js')();
 
 module.exports = () => {
 

@@ -22,13 +22,18 @@ module.exports = () => {
 
     const postController = async (req, res) => {
         const {issueNumber, title, description, status, project, comments} = req.body;
-      
-        const {result, error} = await issues.add(issueNumber, title, description, status, project, comments);
-        if(error){
-            console.log("=== post:: Comments Error");
-            return res.status(500).json(error);
+
+        //Check if all fields were provided
+        if (issueNumber && title && description && status && project && comments){
+            const {result, error} = await issues.add(issueNumber, title, description, status, project, comments);
+            if(error){
+                console.log("=== post:: Comments Error");
+                return res.status(500).json(error);
+            }
+            res.json(result);
+        }else{
+            console.log("=== post:: Comments Error -- all fields are required");
         }
-        res.json(result);
     }
 
     const populatedController = async (req, res) => {
