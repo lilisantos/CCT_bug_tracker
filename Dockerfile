@@ -1,12 +1,8 @@
 ## Simple
-FROM node:latest
+FROM node:14
 WORKDIR /src
-ADD index.js /src
-ADD db.js /src
-ADD package.json /src
-ADD /controllers /src
-ADD /models /src
-ADD /node_modules /src
+COPY ./src ./src
+COPY package.json .
 RUN npm i
 
 EXPOSE 3000
