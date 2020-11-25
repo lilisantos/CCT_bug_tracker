@@ -36,11 +36,17 @@ module.exports = () => {
     
     const postController = async (req, res) => {
         const {issueNumber, title, description, status, project, comments} = req.body;
-        
-        const result = await issues.add(issueNumber, title, description, status, project, comments);
+              
+        //Checks if any of the fields is null
+        if (!title || !description || !slug){       
+            const error = "===== Not all the fields have been provided:: add IssueModel Error";
+            console.log(error);  
+            return res.json(error) ;
+        }
+         
+        const {result, error} = await issues.add(issueNumber, title, description, status, project, comments);
         if(error){
-            console.log("=== post:: Issues Error");
-            return res.status(500).json(error);
+           return res.json(error);
         }
         res.json(result);
     }
@@ -57,11 +63,18 @@ module.exports = () => {
     const addComment = async (req, res) => {
         const {text, author} = req.body;
         const issueNumber = req.params.issueNumber;
+        
+        //Checks if any of the fields is null
+        if (!text || !author){       
+            const error = "===== Not all the fields have been provided:: add UserModel Error";   
+            console.log(error);
+            return res.json(error);
+        } 
                 
         const {result, error} = await issues.addComment(issueNumber, text, author);
         if(error){
             console.log("=== addComment:: Issues Error");
-            return res.status(500).json(error);
+            return res.json(error);
         }
         res.json(result);
     }

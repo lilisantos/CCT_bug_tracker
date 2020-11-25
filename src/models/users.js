@@ -1,4 +1,4 @@
-const db = require("../db")();
+const db = require("../../db")();
 const COLLECTION = "users";
 const bcrypt = require("bcrypt");
 
@@ -64,33 +64,20 @@ module.exports = () => {
 
   
     const add = async(name, email, usertype, key) => {
-      
-     
-
+        let checkEmail = null;
         try{
-            const checkEmail = await db.findUserID(email);        
-            //if a userList: users was not found, does nothing
-            if(checkEmail != null){
-                console.log("===== User already registered with this email:: add UserModel Error");      
-                return {error: "===== User already registered with this email:: add UserModel Error"};        
-                
-            }
+             checkEmail = await db.findUserID(email);      
         }catch(ex){
             return {error: ex};
-        }       
+        }     
+        if(checkEmail != null){
+            const error = "===== User already registered with this email:: add UserModel Error";      
+            console.log(error);
+            return {error: error};                    
+        }      
 
-        const hashedKey = createHash(key);   
-        try{
-            //Checks if any of the fields is null
-            if (!name || !email || !usertype || !key){       
-                console.log("===== Not all the fields have been provided:: add UserModel Error");   
-                return null;
-            }
-        }catch(ex){       
-            return {error: ex}
-        }       
-     
-        try{
+        const hashedKey = createHash(key);  
+        try{         
             const results = await db.add(COLLECTION, {
                 name: name,
                 email: email,

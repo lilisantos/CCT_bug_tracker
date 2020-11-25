@@ -1,6 +1,6 @@
-const { use } = require('..');
+const { use } = require('../..');
 
-const db = require('../db')();
+const db = require('../../db')();
 
 const COLLECTION = "issues";
 const LOOKUP_PROJECTS_PIPELINE = [
@@ -52,8 +52,6 @@ module.exports = () => {
     
     const add = async(project, issueNumber, title, description, status, comments) => {
     //    const issueCount = await db.count(COLLECTION);
-    
- 
         try{
             const results = await db.add(COLLECTION, {
                 issueNumber: issueNumber,

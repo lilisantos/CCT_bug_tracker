@@ -1,5 +1,6 @@
 const comments = require('../models/comments.js')();
 
+
 module.exports = () => {
 
     const getController = async (req, res) => {

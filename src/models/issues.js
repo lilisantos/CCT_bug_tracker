@@ -1,4 +1,4 @@
-const db = require('../db')();
+const db = require('../../db')();
 const COLLECTION = "issues";
 const LOOKUP_PROJECTS_PIPELINE = [
     {
@@ -15,6 +15,7 @@ module.exports = () => {
    
     const get = async (issueNumber = null) => {
         console.log(' inside issues model');
+      
         if(!issueNumber){
             try{
                 const issues = await db.get(COLLECTION);
@@ -51,42 +52,48 @@ module.exports = () => {
         }
     }    
 
-    const add = async(title, description, slug) => {
-       try{
-          const projectID = await db.findProjectID(slug);
-       }catch(ex){
-           return {error: ex}
-       }
-
-      try{
-        const issueCount = await db.count(COLLECTION);
-      }catch(ex){
-          return {error: ex}
-      }
-
-      try{
-        //Checks if any of the fields is null
-        if (!title || !description || !slug){       
-            console.log("===== Not all the fields have been provided:: add IssueModel Error");   
-            return null;
-        }
-        }catch(ex){       
+    const add = async(title, description, slug, dueDate) => {
+        let projectID = null;
+        let issueCount = null;
+        try{
+            projectID = await db.findProjectID(slug);
+        }catch(ex){  
             return {error: ex}
-        }       
- 
-      
-      try{
-        const results = await db.add(COLLECTION, {
-            issueNumber: slug + "-" + (issueCount + 1),
-            title: title,
-            description: description,
-            status: "open",
-            project: projectID    
-        });
-        return results.result;
-      }catch(ex){
-          return {error: ex}
-      }
+        }
+        //if no project was found, return error message
+        if(projectID == null){
+            const error1 = "===== Project not found:: add ProjectModel Error";
+            console.log(error1);   
+            return {error: error1};
+        }    
+
+        try{
+            issueCount = await db.count(COLLECTION);
+        }catch(ex){
+            const e = "=== Issues Count failed";
+            return {error: e}
+        }  
+         //if no project was found, return error message
+        if(issueCount == null){
+            const error2 = "===== Issue Count returned null:: add ProjectModel Error";
+            console.log(error2);   
+            return {error: error2};
+        }   
+
+        try{
+            const results = await db.add(COLLECTION, {
+                issueNumber: slug + "-" + (issueCount + 1),
+                title: title,
+                description: description,
+                status: "open",
+                project: projectID,
+                dueDate: dueDate  
+            });
+            return results.result;
+        }catch(ex){
+            const er = "=== Issues Add failed";
+            return {error: er}
+        }
       
     }
 
@@ -100,24 +107,47 @@ module.exports = () => {
             },
             {
                 $project:{
-                    NumberOfItemsInArray: {$size: "$comments"}
+                    NumberOfItemsInArray: {size: "$comments"}
                  }
             }
         ];
-        const commentsCount = await db.aggregate(COLLECTION, LOOKUP_SIZE_ARRAY_PIPELINE);
 
-        const userID = await db.findUserID(author);
+        let commentsCount = null;
+        let userID = null;
+        
+        try{
+             commentsCount = await db.aggregate(COLLECTION, LOOKUP_SIZE_ARRAY_PIPELINE);
+        }catch(ex){
+            return {error: ex}
+        }
+         //Get userID
+        try{
+            userID = await db.findUserID(author);
+            
+        }catch(ex){
+            return {error: ex}
+        }   
+        if(userID === null){
+            const error = "===== User not found:: add CommentsModel Error";      
+            console.log(error);
+            return {error: error};                    
+        }      
 
-        const results = await db.updateComment(COLLECTION, 
-            {issueNumber: issueNumber}, //filter
-            {comments: [
-                {id: commentsCount.NumberOfItemsInArray + 1,
-                text: text,
-                author: userID,
-                }]
-            } //update
-        );
-        return results.result;
+        try{
+            const results = await db.updateComment(COLLECTION, 
+                {issueNumber: issueNumber}, //filter
+                {comments: [
+                    {id: commentsCount.NumberOfItemsInArray + 1,
+                    text: text,
+                    author: userID,
+                    }]
+                } //update
+            );
+            return results.result;
+        }catch(ex){
+            return {error: ex}
+        }
+       
      }
 
     const aggregateWithProjects = async() => {
@@ -146,7 +176,6 @@ module.exports = () => {
         return issues;
     };
     
-
     const updateStatus = async (issueNumber, status) => {
         if(!issueNumber){
             console.log("Issue number required for update");

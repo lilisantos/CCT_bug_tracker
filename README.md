@@ -79,12 +79,17 @@ List of features ready and TODOs for future development
 - Continuous Assesment Part 2 for the course CBWA
     * Implementation of Error Checking
     * Implementation of Duplicate Items Checking
-    * Project Dockerized
+    * Project Docker-ized
 
 ## Roadmap
 To-do list:
 
 - Front-end interface
+- Implement watchers for issues
+- Implement issues linking
 
 ## Contact
 Created by @lilisantos - feel free to contact me!
+
+* I am a student at CCT Dublin, coursing a Higher Diploma in Science in Computing.
+

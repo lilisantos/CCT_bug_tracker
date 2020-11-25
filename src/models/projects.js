@@ -1,4 +1,4 @@
-const db = require('../db')();
+const db = require('../../db')();
 const COLLECTION = "projects";
 
 module.exports = () => { 
@@ -24,36 +24,26 @@ module.exports = () => {
     }
 
     const add = async(slug, name, description) => {
-     
-      const checkProject = await db.findProjectID(slug);
-      try{
-          //if a project was found, return error message
-          if(checkProject != null){
-            console.log("===== Project already registered with this slug:: add ProjectModel Error");              
-            return null;
-           
-          }
-      }catch(ex){       
-          return {error: ex}
-      }
+      let checkProject = null;
 
       try{
-        //Checks if any of the fields is null
-        if (!slug || !name || !description){       
-            console.log("===== Not all the fields have been provided:: add ProjectModel Error");   
-            return null;
-        }
-    }catch(ex){       
-        return {error: ex}
-    }       
- 
+         checkProject = await db.findProjectID(slug);
+        }catch(ex){       
+          return {error: ex}
+      }
+      //if a project was found, return error message
+      if(checkProject != null){
+        const error1 = "===== Project already registered with this slug:: add ProjectModel Error";
+        console.log(error1);     
+        return {error: error1};
+      }     
 
       try{
         const results = await db.add(COLLECTION, {
           slug: slug,
           name: name,
           description: description,
-         });
+         });        
          return results.result;
       }catch(ex){
           return {error: ex}

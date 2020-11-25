@@ -23,9 +23,16 @@ module.exports = () => {
     const postController = async (req, res) => {
         const {name, email, usertype, key} = req.body;
 
+        //Checks if any of the fields is null
+        if (!name || !email || !usertype || !key){       
+            const error = "===== Not all the fields have been provided:: add UserModel Error";   
+            console.log(error);
+            return res.json(error);
+        } 
+
         const {results, error} = await users.add(name, email, usertype, key);
         if(error){
-            return res.status(500).json({error});
+            return res.json(error);
         }
         res.json(results);
     }
